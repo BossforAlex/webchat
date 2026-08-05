@@ -131,13 +131,13 @@ class WechatApi {
 
     suspend fun getContacts(): List<JSONObject> = withContext(Dispatchers.IO) {
         val result = request("getContacts")
-        val arr = result.optJSONArray("contacts") ?: result
+        val arr = result.optJSONArray("contacts") ?: JSONArray()
         (0 until arr.length()).map { arr.getJSONObject(it) }
     }
 
     suspend fun getMessages(): List<JSONObject> = withContext(Dispatchers.IO) {
         val result = request("getMessages")
-        val arr = result.optJSONArray("messages") ?: result
+        val arr = result.optJSONArray("messages") ?: JSONArray()
         (0 until arr.length()).map { arr.getJSONObject(it) }
     }
 
