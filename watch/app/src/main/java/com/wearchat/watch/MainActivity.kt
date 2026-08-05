@@ -1,6 +1,8 @@
 package com.wearchat.watch
 
+import android.content.Intent
 import android.os.Bundle
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.recyclerview.widget.RecyclerView
@@ -9,7 +11,10 @@ import kotlinx.coroutines.*
 
 class MainActivity : ComponentActivity() {
 
-    private val api = WechatApi()
+    companion object {
+        val api = WechatApi()
+    }
+
     private val scope = CoroutineScope(Dispatchers.Main + Job())
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -18,24 +23,30 @@ class MainActivity : ComponentActivity() {
 
         val recyclerView = findViewById<RecyclerView>(R.id.message_list)
         recyclerView.layoutManager = WearableLinearLayoutManager(this)
+        recyclerView.isEdgeItemsCenteringEnabled = true
 
-        connectBluetooth()
+        val statusText = findViewById<TextView>(R.id.status_text)
+
+        connectBluetooth(statusText)
     }
 
-    private fun connectBluetooth() {
+    private fun connectBluetooth(statusText: TextView) {
         api.connect { event ->
             runOnUiThread {
                 when (event.type) {
                     "connected" -> {
-                        Toast.makeText(this@MainActivity, "蓝牙已连接", Toast.LENGTH_SHORT).show()
+                        statusText.text = "Connected"
+                        statusText.setTextColor(0xFF4CAF50.toInt())
                         loadMessages()
                     }
                     "new_message" -> loadMessages()
                     "disconnected" -> {
-                        Toast.makeText(this@MainActivity, "蓝牙断开，自动重连中...", Toast.LENGTH_SHORT).show()
+                        statusText.text = "Disconnected. Reconnecting..."
+                        statusText.setTextColor(0xFFFF5722.toInt())
                     }
                     "error" -> {
-                        Toast.makeText(this@MainActivity, "连接失败: ${event.data}", Toast.LENGTH_SHORT).show()
+                        statusText.text = "Error: ${event.data}"
+                        statusText.setTextColor(0xFFFF5722.toInt())
                     }
                 }
             }
@@ -48,14 +59,14 @@ class MainActivity : ComponentActivity() {
                 val messages = api.getMessages()
                 // Update RecyclerView adapter
             } catch (e: Exception) {
-                Toast.makeText(this@MainActivity, "加载失败: ${e.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@MainActivity, "Load failed: ${e.message}", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
     override fun onDestroy() {
         scope.cancel()
-        api.disconnect()
+        // Don't disconnect - other activities may use the connection
         super.onDestroy()
     }
 }

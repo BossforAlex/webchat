@@ -1,11 +1,15 @@
 package com.wearchat.phone
 
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.app.Service
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothServerSocket
 import android.bluetooth.BluetoothSocket
 import android.content.Intent
+import android.os.Build
 import android.os.IBinder
 import android.util.Log
 import org.json.JSONObject
@@ -23,6 +27,8 @@ class BluetoothServer : Service() {
         const val SERVICE_NAME = "wearchat"
         const val BROADCAST_NEW_MESSAGE = "com.wearchat.NEW_MESSAGE"
         const val BROADCAST_REQUEST_REPLY = "com.wearchat.REQUEST_REPLY"
+        private const val NOTIFICATION_ID = 1001
+        private const val CHANNEL_ID = "wearchat_bt_channel"
 
         private var serverThread: AcceptThread? = null
         private val clients = ConcurrentHashMap<String, BluetoothSocket>()
@@ -39,11 +45,37 @@ class BluetoothServer : Service() {
         }
     }
 
+    override fun onCreate() {
+        super.onCreate()
+        createNotificationChannel()
+    }
+
     override fun onBind(intent: Intent?): IBinder? = null
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        val notification = Notification.Builder(this, CHANNEL_ID)
+            .setContentTitle("wearchat")
+            .setContentText("Bluetooth service running")
+            .setSmallIcon(android.R.drawable.ic_dialog_info)
+            .setOngoing(true)
+            .build()
+        startForeground(NOTIFICATION_ID, notification)
         startServer()
         return START_STICKY
+    }
+
+    private fun createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                CHANNEL_ID,
+                "wearchat Bluetooth",
+                NotificationManager.IMPORTANCE_LOW
+            ).apply {
+                description = "wearchat Bluetooth service"
+            }
+            val manager = getSystemService(NotificationManager::class.java)
+            manager.createNotificationChannel(channel)
+        }
     }
 
     private fun startServer() {

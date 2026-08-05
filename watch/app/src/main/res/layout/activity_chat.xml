@@ -1,22 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<androidx.wear.widget.BoxInsetLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:background="@android:color/black">
 
-    <androidx.wear.widget.WearableRecyclerView
-        android:id="@+id/chat_messages"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1" />
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        app:layout_boxedEdges="all">
 
-    <EditText
-        android:id="@+id/message_input"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Type a message..."
-        android:imeOptions="actionSend"
-        android:inputType="text" />
+        <TextView
+            android:id="@+id/chat_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:paddingTop="10dp"
+            android:paddingBottom="6dp"
+            android:text="Chat"
+            android:textColor="@android:color/white"
+            android:textSize="14sp"
+            android:textStyle="bold" />
 
-</LinearLayout>
+        <androidx.wear.widget.WearableRecyclerView
+            android:id="@+id/chat_messages"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:scrollbars="none" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:padding="6dp"
+            android:background="#1a1a1a">
+
+            <EditText
+                android:id="@+id/message_input"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Reply..."
+                android:textColorHint="#666666"
+                android:textColor="@android:color/white"
+                android:textSize="13sp"
+                android:imeOptions="actionSend"
+                android:inputType="text"
+                android:background="@android:color/transparent"
+                android:padding="8dp"
+                android:maxLines="2" />
+
+            <Button
+                android:id="@+id/send_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Send"
+                android:textSize="12sp"
+                android:minWidth="0dp"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.wear.widget.BoxInsetLayout>

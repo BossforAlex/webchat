@@ -2,6 +2,7 @@ package com.wearchat.watch
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.recyclerview.widget.RecyclerView
 import androidx.wear.widget.WearableLinearLayoutManager
@@ -9,7 +10,7 @@ import kotlinx.coroutines.*
 
 class ContactsActivity : ComponentActivity() {
 
-    private val api = WechatApi()
+    private val api = MainActivity.api
     private val scope = CoroutineScope(Dispatchers.Main + Job())
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -18,6 +19,7 @@ class ContactsActivity : ComponentActivity() {
 
         val recyclerView = findViewById<RecyclerView>(R.id.contact_list)
         recyclerView.layoutManager = WearableLinearLayoutManager(this)
+        recyclerView.isEdgeItemsCenteringEnabled = true
 
         loadContacts()
     }
@@ -27,9 +29,9 @@ class ContactsActivity : ComponentActivity() {
             try {
                 val contacts = api.getContacts()
                 // Update RecyclerView adapter
-                // On item click: startActivity(Intent(this, ChatActivity::class.java).putExtra("contact_id", id))
+                // On item click: navigate to chat
             } catch (e: Exception) {
-                // Handle error
+                Toast.makeText(this@ContactsActivity, "Load failed: ${e.message}", Toast.LENGTH_SHORT).show()
             }
         }
     }
