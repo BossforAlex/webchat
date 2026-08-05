@@ -47,7 +47,7 @@ class WechatApi(
 
     suspend fun sendMessage(contactId: String, content: String): JSONObject = withContext(Dispatchers.IO) {
         val json = JSONObject().put("content", content)
-        val body = RequestBody.create(MediaType.parse("application/json"), json.toString())
+        val body = RequestBody.create("application/json".toMediaType(), json.toString())
         val request = Request.Builder().url("$baseUrl/api/messages/$contactId").post(body).build()
         val response = client.newCall(request).execute()
         JSONObject(response.body?.string() ?: "{}")

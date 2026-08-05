@@ -1,17 +1,53 @@
 # Base image with GUI dependencies for running WeChat Linux client headlessly
-FROM jlesage/baseimage-gui:ubuntu-22.04
+FROM jlesage/baseimage-gui:ubuntu-22.04-v4
 
-# Install X11 and GUI dependencies needed by WeChat Linux
-RUN apt-get update && apt-get install -y \
-    xvfb \
-    x11vnc \
-    xdotool \
-    wmctrl \
-    fluxbox \
-    supervisor \
-    && apt-get clean
+ENV LANG=zh_CN.UTF-8
 
-# Set up display
-ENV DISPLAY=:99
+# Install WeChat Linux runtime dependencies + Chinese support
+RUN set -e \
+    && mkdir -p /tmp/run /config/log \
+    && rm -f /etc/passwd /etc/group /etc/shadow \
+    && printf '%s\n' \
+         'root:x:0:0:root:/root:/bin/sh' \
+         'daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin' \
+         'bin:x:2:2:bin:/bin:/usr/sbin/nologin' \
+         'sys:x:3:3:sys:/dev:/usr/sbin/nologin' \
+         'nobody:x:65534:65534:nobody:/nonexistent:/usr/sbin/nologin' \
+         > /etc/passwd \
+    && printf '%s\n' \
+         'root:x:0:' 'daemon:x:1:' 'bin:x:2:' 'sys:x:3:' 'adm:x:4:' \
+         'tty:x:5:' 'disk:x:6:' 'lp:x:7:' 'mail:x:8:' 'news:x:9:' \
+         'uucp:x:10:' 'man:x:12:' 'proxy:x:13:' 'kmem:x:15:' \
+         'dialout:x:20:' 'fax:x:21:' 'voice:x:22:' 'cdrom:x:24:' \
+         'floppy:x:25:' 'tape:x:26:' 'sudo:x:27:' 'audio:x:29:' \
+         'dip:x:30:' 'www-data:x:33:' 'backup:x:34:' 'operator:x:37:' \
+         'list:x:38:' 'irc:x:39:' 'src:x:40:' 'gnats:x:41:' \
+         'shadow:x:42:' 'utmp:x:43:' 'video:x:44:' 'sasl:x:45:' \
+         'plugdev:x:46:' 'staff:x:50:' 'games:x:60:' 'users:x:100:' \
+         'nogroup:x:65534:' \
+         > /etc/group \
+    && printf '%s\n' \
+         'root:*:19448:0:99999:7:::' \
+         'daemon:*:19448:0:99999:7:::' \
+         'nobody:*:19448:0:99999:7:::' \
+         > /etc/shadow \
+    && chmod 640 /etc/shadow \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends \
+         locales fonts-noto-cjk fonts-noto-color-emoji \
+         curl ca-certificates \
+         libgtk-3-0 libnss3 libnspr4 libgbm1 \
+         libxkbcommon0 libxkbcommon-x11-0 libx11-xcb1 \
+         libxcb-icccm4 libxcb-image0 libxcb-keysyms1 \
+         libxcb-randr0 libxcb-render-util0 libxcb-shape0 \
+         libxcb-shm0 libxcb-sync1 libxcb-util1 libxcb-xfixes0 \
+         libxcb-xkb1 libxcb-xinerama0 libxcb-glx0 \
+         libxtst6 libxss1 \
+         libasound2 libpulse0 libatomic1 \
+    && sed -i 's/# zh_CN.UTF-8 UTF-8/zh_CN.UTF-8 UTF-8/' /etc/locale.gen \
+    && locale-gen \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
 ENV DISPLAY_WIDTH=1920
 ENV DISPLAY_HEIGHT=1080
