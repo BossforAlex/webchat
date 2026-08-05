@@ -40,6 +40,7 @@ dependencies {
     implementation("androidx.wear:wear:1.3.0")
     implementation("androidx.wear:wear-input:1.2.0")
     implementation("com.google.android.support:wearable:2.9.0")
+    compileOnly("com.google.android.wearable:wearable:2.9.0")
     implementation("androidx.recyclerview:recyclerview:1.3.2")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
 
