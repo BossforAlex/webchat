@@ -1,0 +1,28 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+watch/app/build/
+watch/build/
+watch/.gradle/
+*.apk
+*.aab
+*.dex
+
+# IDE
+.idea/
+*.iml
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker
+*.log
+
+# Environment
+.env
+.env.local

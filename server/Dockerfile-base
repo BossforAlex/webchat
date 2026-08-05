@@ -1,0 +1,17 @@
+# Base image with GUI dependencies for running WeChat Linux client headlessly
+FROM jlesage/baseimage-gui:ubuntu-24.04
+
+# Install X11 and GUI dependencies needed by WeChat Linux
+RUN apt-get update && apt-get install -y \
+    xvfb \
+    x11vnc \
+    xdotool \
+    wmctrl \
+    fluxbox \
+    supervisor \
+    && apt-get clean
+
+# Set up display
+ENV DISPLAY=:99
+ENV DISPLAY_WIDTH=1920
+ENV DISPLAY_HEIGHT=1080
