@@ -2,6 +2,7 @@ package com.wearchat.watch
 
 import kotlinx.coroutines.*
 import okhttp3.*
+import okhttp3.MediaType.Companion.toMediaType
 import org.json.JSONArray
 import org.json.JSONObject
 import java.util.concurrent.TimeUnit
@@ -47,7 +48,7 @@ class WechatApi(
 
     suspend fun sendMessage(contactId: String, content: String): JSONObject = withContext(Dispatchers.IO) {
         val json = JSONObject().put("content", content)
-        val body = RequestBody.create(MediaType.get("application/json; charset=utf-8"), json.toString())
+        val body = json.toString().toRequestBody("application/json".toMediaType())
         val request = Request.Builder().url("$baseUrl/api/messages/$contactId").post(body).build()
         val response = client.newCall(request).execute()
         JSONObject(response.body?.string() ?: "{}")
