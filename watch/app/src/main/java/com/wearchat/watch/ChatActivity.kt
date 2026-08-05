@@ -28,9 +28,7 @@ class ChatActivity : ComponentActivity() {
         findViewById<TextView>(R.id.chat_title).text = contactName ?: "Chat"
 
         val recyclerView = findViewById<RecyclerView>(R.id.chat_messages)
-        val layoutManager = WearableLinearLayoutManager(this)
-        layoutManager.isEdgeItemsCenteringEnabled = true
-        recyclerView.layoutManager = layoutManager
+        recyclerView.layoutManager = WearableLinearLayoutManager(this)
 
         val input = findViewById<EditText>(R.id.message_input)
         val sendBtn = findViewById<Button>(R.id.send_btn)

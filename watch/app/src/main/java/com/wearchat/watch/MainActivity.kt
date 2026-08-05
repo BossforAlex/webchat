@@ -22,9 +22,7 @@ class MainActivity : ComponentActivity() {
         setContentView(R.layout.activity_main)
 
         val recyclerView = findViewById<RecyclerView>(R.id.message_list)
-        val layoutManager = WearableLinearLayoutManager(this)
-        layoutManager.isEdgeItemsCenteringEnabled = true
-        recyclerView.layoutManager = layoutManager
+        recyclerView.layoutManager = WearableLinearLayoutManager(this)
 
         val statusText = findViewById<TextView>(R.id.status_text)
 

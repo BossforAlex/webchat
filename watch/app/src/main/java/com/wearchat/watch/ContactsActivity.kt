@@ -18,9 +18,7 @@ class ContactsActivity : ComponentActivity() {
         setContentView(R.layout.activity_contacts)
 
         val recyclerView = findViewById<RecyclerView>(R.id.contact_list)
-        val layoutManager = WearableLinearLayoutManager(this)
-        layoutManager.isEdgeItemsCenteringEnabled = true
-        recyclerView.layoutManager = layoutManager
+        recyclerView.layoutManager = WearableLinearLayoutManager(this)
 
         loadContacts()
     }
