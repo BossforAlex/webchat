@@ -26,21 +26,12 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
-
-      - name: Cache Gradle
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: gradle-${{ runner.os }}-${{ hashFiles('watch/**/*.gradle*', 'watch/**/gradle-wrapper.properties') }}
-          restore-keys: gradle-${{ runner.os }}-
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
 
       - name: Build debug APK
         working-directory: watch
-        run: ./gradlew assembleDebug
+        run: gradle assembleDebug
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
@@ -51,7 +42,7 @@ jobs:
       - name: Build release APK (on push to main)
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         working-directory: watch
-        run: ./gradlew assembleRelease
+        run: gradle assembleRelease
 
       - name: Upload release APK artifact
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
