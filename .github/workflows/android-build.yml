@@ -30,10 +30,15 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: 8.5
+          build-root-directory: watch
+
+      - name: Generate Gradle wrapper
+        working-directory: watch
+        run: gradle wrapper
 
       - name: Build debug APK
         working-directory: watch
-        run: gradle assembleDebug
+        run: ./gradlew assembleDebug
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
@@ -44,7 +49,7 @@ jobs:
       - name: Build release APK (on push to main)
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         working-directory: watch
-        run: gradle assembleRelease
+        run: ./gradlew assembleRelease
 
       - name: Upload release APK artifact
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
