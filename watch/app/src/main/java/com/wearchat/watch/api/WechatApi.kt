@@ -11,7 +11,9 @@ import java.util.concurrent.TimeUnit
 data class WsEvent(val type: String, val data: String)
 
 class WechatApi(
-    private val baseUrl: String = "http://10.0.2.2:3000"  // Android emulator -> host
+    // Connect to phone's wearchat Phone app (port 8765)
+    // Change this IP to your phone's local IP address
+    private var baseUrl: String = "http://192.168.1.100:8765"
 ) {
     private val client = OkHttpClient.Builder()
         .connectTimeout(10, TimeUnit.SECONDS)
@@ -19,6 +21,10 @@ class WechatApi(
         .build()
 
     private var webSocket: WebSocket? = null
+
+    fun updateBaseUrl(url: String) {
+        baseUrl = url
+    }
 
     // --- REST API ---
 
@@ -58,7 +64,8 @@ class WechatApi(
     // --- WebSocket ---
 
     fun connectWebSocket(onEvent: (WsEvent) -> Unit) {
-        val request = Request.Builder().url("ws://10.0.2.2:3000/ws").build()
+        val wsUrl = baseUrl.replace("http://", "ws://").replace("https://", "wss://") + "/ws"
+        val request = Request.Builder().url(wsUrl).build()
         webSocket = client.newWebSocket(request, object : WebSocketListener() {
             override fun onMessage(webSocket: WebSocket, text: String) {
                 val json = JSONObject(text)

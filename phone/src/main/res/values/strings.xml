@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">wearchat Phone</string>
+    <string name="server_status">服务器状态</string>
+    <string name="server_running">运行中</string>
+    <string name="server_stopped">已停止</string>
+    <string name="enable_notification">请先开启通知监听权限</string>
+    <string name="open_settings">打开设置</string>
+</resources>

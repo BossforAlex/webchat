@@ -5,6 +5,8 @@ node_modules/
 watch/app/build/
 watch/build/
 watch/.gradle/
+phone/build/
+phone/.gradle/
 *.apk
 *.aab
 *.dex
