@@ -11,8 +11,8 @@ android {
         applicationId = "com.wearchat.watch"
         minSdk = 30  // Wear OS 3.0+
         targetSdk = 34
-        versionCode = 3
-        versionName = "0.3.1"
+        versionCode = 4
+        versionName = "0.3.2"
     }
 
     buildTypes {
@@ -42,6 +42,8 @@ android {
 
 dependencies {
     implementation("androidx.core:core-ktx:1.12.0")
+    implementation("androidx.activity:activity-ktx:1.8.2")
+    implementation("androidx.fragment:fragment-ktx:1.6.2")
     implementation("androidx.wear:wear:1.3.0")
     implementation("androidx.wear:wear-input:1.2.0")
     implementation("com.google.android.support:wearable:2.9.0")

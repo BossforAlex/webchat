@@ -3,6 +3,7 @@ package com.wearchat.phone
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
 import android.os.Bundle
+import org.json.JSONObject
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -27,7 +28,12 @@ class NotificationListener : NotificationListenerService() {
         )
 
         // Notify Bluetooth clients
-        BluetoothServer.broadcastEvent("new_message", """{"contact":"$title","content":"$text","time":"$time"}""")
+        val data = JSONObject().apply {
+            put("contact", title)
+            put("content", text)
+            put("time", time)
+        }.toString()
+        BluetoothServer.broadcastEvent("new_message", data)
     }
 
     override fun onNotificationRemoved(sbn: StatusBarNotification) {

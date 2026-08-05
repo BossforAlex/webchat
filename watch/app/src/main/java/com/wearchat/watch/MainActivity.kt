@@ -1,10 +1,16 @@
 package com.wearchat.watch
 
+import android.Manifest
+import android.bluetooth.BluetoothAdapter
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import androidx.wear.widget.WearableLinearLayoutManager
 import kotlinx.coroutines.*
@@ -17,6 +23,18 @@ class MainActivity : ComponentActivity() {
 
     private val scope = CoroutineScope(Dispatchers.Main + Job())
 
+    private val requestPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { results ->
+            val allGranted = results.values.all { it }
+            if (allGranted) {
+                connectBluetooth(findViewById<TextView>(R.id.status_text))
+            } else {
+                val statusText = findViewById<TextView>(R.id.status_text)
+                statusText.text = "Permission denied"
+                Toast.makeText(this, "Bluetooth permission required", Toast.LENGTH_LONG).show()
+            }
+        }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -24,9 +42,27 @@ class MainActivity : ComponentActivity() {
         val recyclerView = findViewById<RecyclerView>(R.id.message_list)
         recyclerView.layoutManager = WearableLinearLayoutManager(this)
 
-        val statusText = findViewById<TextView>(R.id.status_text)
+        checkAndRequestPermissions()
+    }
 
-        connectBluetooth(statusText)
+    private fun checkAndRequestPermissions() {
+        val permissions = mutableListOf<String>()
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT)
+                != PackageManager.PERMISSION_GRANTED
+            ) permissions.add(Manifest.permission.BLUETOOTH_CONNECT)
+
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_SCAN)
+                != PackageManager.PERMISSION_GRANTED
+            ) permissions.add(Manifest.permission.BLUETOOTH_SCAN)
+        }
+
+        if (permissions.isEmpty()) {
+            connectBluetooth(findViewById<TextView>(R.id.status_text))
+        } else {
+            requestPermissionLauncher.launch(permissions.toTypedArray())
+        }
     }
 
     private fun connectBluetooth(statusText: TextView) {
