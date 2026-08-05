@@ -1,14 +1,12 @@
 package com.wearchat.phone
 
-import android.content.ComponentName
+import android.bluetooth.BluetoothAdapter
 import android.content.Intent
 import android.os.Bundle
 import android.provider.Settings
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import java.net.InetAddress
-import java.net.NetworkInterface
 
 class MainActivity : AppCompatActivity() {
 
@@ -20,32 +18,27 @@ class MainActivity : AppCompatActivity() {
         val ipText = findViewById<TextView>(R.id.ip_text)
         val enableBtn = findViewById<Button>(R.id.enable_btn)
 
-        // Show local IP
-        ipText.text = "手机 IP: ${getLocalIpAddress()}\n端口: 8765"
+        val adapter = BluetoothAdapter.getDefaultAdapter()
+        if (adapter?.isEnabled == true) {
+            statusText.text = "蓝牙服务运行中"
+            ipText.text = "设备名: ${adapter.name}\nUUID: wearchat"
+        } else {
+            statusText.text = "蓝牙未开启"
+            ipText.text = "请先开启蓝牙"
+        }
 
-        // Start API server
-        startService(Intent(this, ApiServer::class.java))
-        statusText.text = "服务器运行中"
+        // Start Bluetooth server
+        startService(Intent(this, BluetoothServer::class.java))
 
         enableBtn.setOnClickListener {
             startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS))
         }
-    }
 
-    private fun getLocalIpAddress(): String {
-        try {
-            val interfaces = NetworkInterface.getNetworkInterfaces()
-            while (interfaces.hasMoreElements()) {
-                val ni = interfaces.nextElement()
-                val addresses = ni.inetAddresses
-                while (addresses.hasMoreElements()) {
-                    val addr = addresses.nextElement()
-                    if (!addr.isLoopbackAddress && addr is InetAddress && addr.address.size == 4) {
-                        return addr.hostAddress ?: "0.0.0.0"
-                    }
-                }
+        findViewById<Button>(R.id.accessibility_btn).apply {
+            visibility = android.view.View.VISIBLE
+            setOnClickListener {
+                startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
             }
-        } catch (_: Exception) {}
-        return "0.0.0.0"
+        }
     }
 }

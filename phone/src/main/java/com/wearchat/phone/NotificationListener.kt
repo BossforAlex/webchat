@@ -26,8 +26,8 @@ class NotificationListener : NotificationListenerService() {
             time = time
         )
 
-        // Notify WebSocket clients
-        ApiServer.broadcast("new_message", """{"contact":"$title","content":"$text","time":"$time"}""")
+        // Notify Bluetooth clients
+        BluetoothServer.broadcastEvent("new_message", """{"contact":"$title","content":"$text","time":"$time"}""")
     }
 
     override fun onNotificationRemoved(sbn: StatusBarNotification) {

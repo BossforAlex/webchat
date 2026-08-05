@@ -1,3 +1,2 @@
-# NanoHTTPd
--keep class fi.iki.elonen.** { *; }
--dontwarn fi.iki.elonen.**
+# Bluetooth / Accessibility
+-keep class com.wearchat.phone.** { *; }
