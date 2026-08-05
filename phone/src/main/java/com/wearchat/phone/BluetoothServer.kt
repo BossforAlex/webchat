@@ -131,8 +131,8 @@ class BluetoothServer : Service() {
                 val params = req.optJSONObject("params") ?: JSONObject()
 
                 val result = when (method) {
-                    "getContacts" -> MessageStore.getContacts()
-                    "getMessages" -> MessageStore.getAllMessages()
+                    "getContacts" -> JSONObject().put("contacts", MessageStore.getContacts())
+                    "getMessages" -> JSONObject().put("messages", MessageStore.getAllMessages())
                     "getChatMessages" -> {
                         val contactId = params.optString("contactId")
                         val msgs = MessageStore.getMessages(contactId)
